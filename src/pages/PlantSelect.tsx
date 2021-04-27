@@ -6,6 +6,7 @@ import {
   Text,
   FlatList,
   ActivityIndicator,
+  ScrollView,
 } from 'react-native';
 import {EnviromentButton} from '../components/EnviromentButton';
 import {Header} from '../components/Header';
@@ -97,6 +98,9 @@ export const PlantSelect = () => {
   if (loading) return <Load />;
 
   return (
+    // <ScrollView
+    //   showsVerticalScrollIndicator={false}
+    //   contentContainerStyle={styles.container}>
     <View style={styles.container}>
       <View style={styles.header}>
         <Header />
@@ -139,6 +143,7 @@ export const PlantSelect = () => {
         />
       </View>
     </View>
+    // </ScrollView>
   );
 };
 

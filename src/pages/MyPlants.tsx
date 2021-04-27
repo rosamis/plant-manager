@@ -1,11 +1,15 @@
 import {useNavigation} from '@react-navigation/native';
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, View, Text, Image, FlatList} from 'react-native';
+import {StyleSheet, View, Text, Image, FlatList, Alert} from 'react-native';
 import colors from '../styles/colors';
 import fonts from '../styles/fonts';
 import waterdrop from '../assets/waterdrop.png';
 import {Header} from '../components/Header';
-import {loadPlant, PlantProps} from '../libs/storage';
+import {
+  loadPlant,
+  PlantProps,
+  removePlant,
+} from '../libs/storage';
 import {formatDistance} from 'date-fns';
 import {pt} from 'date-fns/locale';
 import {PlantCardSecondary} from '../components/PlantCardSecondary';
@@ -16,6 +20,25 @@ export const MyPlants = () => {
   const [loading, setLoading] = useState(true);
   const [nextWaterd, setNextWaterd] = useState<string>();
 
+  function handleRemove(plant: PlantProps) {
+    Alert.alert('Remover', `Deseja remover a ${plant.name}`, [
+      {
+        text: 'Nao 🙏🏻',
+        style: 'cancel',
+      },
+      {
+        text: 'Sim 😢',
+        onPress: async () => {
+          try {
+            await removePlant(plant.id);
+            setMyPlants(oldData => oldData.filter(item => item.id != plant.id));
+          } catch (error) {
+            Alert.alert('Nao foi possivel remover! 😢');
+          }
+        },
+      },
+    ]);
+  }
   useEffect(() => {
     async function loadStorageData() {
       const plantsStoraged = await loadPlant();
@@ -49,7 +72,12 @@ export const MyPlants = () => {
         <FlatList
           data={myPlants}
           keyExtractor={item => String(item.id)}
-          renderItem={({item}) => <PlantCardSecondary data={item} />}
+          renderItem={({item}) => (
+            <PlantCardSecondary
+              data={item}
+              handleRemove={() => handleRemove(item)}
+            />
+          )}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{flex: 1}}
         />
